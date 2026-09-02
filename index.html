@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>הזמנה לדייט 🍣</title>
+  <meta name="description" content="הזמנה קטנה לערב גדול" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800&family=Rubik:wght@500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-1: #1a0b1e;
+      --bg-2: #4a1942;
+      --bg-3: #b3305f;
+      --accent: #ff6b8a;
+      --accent-2: #ffb86b;
+      --yes: #2ecc71;
+      --yes-dark: #1e9e55;
+      --no: #ff4d6d;
+      --text: #fff6f8;
+      --muted: rgba(255, 246, 248, 0.7);
+      --card: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.18);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+
+    body {
+      font-family: 'Heebo', 'Rubik', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(1200px 800px at 20% 10%, var(--bg-3), transparent 60%),
+                  radial-gradient(900px 700px at 90% 90%, var(--bg-2), transparent 60%),
+                  linear-gradient(160deg, var(--bg-1), #2b0f2f 60%, var(--bg-1));
+      background-attachment: fixed;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    /* floating background emoji */
+    .bg {
+      position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0;
+    }
+    .bg span {
+      position: absolute; bottom: -10vh; font-size: 28px; opacity: 0;
+      animation: float linear infinite;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.35));
+    }
+    @keyframes float {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+      10%  { opacity: .55; }
+      90%  { opacity: .55; }
+      100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+    }
+
+    .app {
+      position: relative; z-index: 1;
+      height: 100%; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 24px 20px 84px;
+    }
+
+    .slide {
+      display: none; width: 100%; max-width: 520px; text-align: center;
+      animation: pop .55s cubic-bezier(.2,.9,.3,1.2) both;
+    }
+    .slide.active { display: block; }
+    .slide.leaving { animation: leave .3s ease-in both; }
+    @keyframes pop  { from { opacity: 0; transform: translateY(24px) scale(.96); } to { opacity: 1; transform: none; } }
+    @keyframes leave { to { opacity: 0; transform: translateY(-24px) scale(.96); } }
+
+    .emoji { font-size: clamp(64px, 18vw, 110px); line-height: 1; margin-bottom: 14px; display: inline-block; }
+    .emoji.beat { animation: beat 1.4s ease-in-out infinite; }
+    @keyframes beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.12); } 45% { transform: scale(1.02); } 60% { transform: scale(1.14); } }
+    .emoji.wiggle { animation: wiggle 2.2s ease-in-out infinite; }
+    @keyframes wiggle { 0%,100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+
+    h1 {
+      font-family: 'Rubik', 'Heebo', sans-serif;
+      font-weight: 900; font-size: clamp(30px, 8vw, 46px); line-height: 1.2;
+      margin: 0 0 14px;
+      background: linear-gradient(90deg, #fff, #ffd2dc 45%, var(--accent-2));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    p { font-size: clamp(17px, 4.6vw, 21px); line-height: 1.6; color: var(--muted); margin: 0 0 10px; font-weight: 300; }
+    p strong { color: var(--text); font-weight: 600; }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 22px; padding: 22px 20px; margin: 18px 0 6px;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      text-align: right;
+    }
+    .row { display: flex; align-items: center; gap: 14px; padding: 10px 0; }
+    .row + .row { border-top: 1px dashed var(--border); }
+    .row .ico { font-size: 30px; width: 44px; text-align: center; flex: none; }
+    .row .lbl { font-size: 13px; color: var(--muted); letter-spacing: .3px; }
+    .row .val { font-size: 20px; font-weight: 600; }
+    .row a { color: var(--accent-2); text-decoration: none; border-bottom: 1px solid rgba(255,184,107,.4); }
+
+    .btn {
+      appearance: none; border: 0; cursor: pointer;
+      font-family: inherit; font-weight: 800; font-size: 20px;
+      color: #fff; padding: 16px 34px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), #ff8fa3);
+      box-shadow: 0 12px 30px rgba(255,107,138,.4), inset 0 -3px 0 rgba(0,0,0,.15);
+      transition: transform .15s ease, box-shadow .15s ease;
+      margin-top: 22px;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(1px) scale(.98); }
+
+    /* question slide */
+    .answers {
+      position: relative; margin-top: 30px;
+      display: flex; justify-content: center; align-items: center; gap: 18px; flex-wrap: wrap;
+      min-height: 90px;
+    }
+    .btn.yes {
+      background: linear-gradient(135deg, var(--yes), #6ee7a0);
+      box-shadow: 0 12px 30px rgba(46,204,113,.45), inset 0 -3px 0 rgba(0,0,0,.15);
+      margin-top: 0; transition: transform .25s cubic-bezier(.2,.9,.3,1.3), font-size .25s ease, padding .25s ease;
+      position: relative; z-index: 2;
+    }
+    .btn.no {
+      background: linear-gradient(135deg, var(--no), #ff8095);
+      box-shadow: 0 12px 30px rgba(255,77,109,.4), inset 0 -3px 0 rgba(0,0,0,.15);
+      margin-top: 0; transition: left .18s ease-out, top .18s ease-out, transform .18s ease;
+      position: relative; z-index: 3; white-space: nowrap;
+    }
+    .btn.no.fleeing { position: fixed; margin: 0; }
+
+    .hint {
+      margin-top: 16px; font-size: 15px; color: var(--muted); min-height: 24px;
+      transition: opacity .3s;
+    }
+
+    /* progress dots */
+    .dots {
+      position: fixed; bottom: 26px; left: 0; right: 0; z-index: 2;
+      display: flex; justify-content: center; gap: 8px; pointer-events: none;
+    }
+    .dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.25); transition: all .3s; }
+    .dots i.on { width: 24px; background: var(--accent); }
+
+    /* countdown */
+    .count { display: flex; justify-content: center; gap: 10px; margin-top: 14px; direction: ltr; }
+    .count div { background: rgba(0,0,0,.25); border: 1px solid var(--border); border-radius: 14px; padding: 8px 10px; min-width: 62px; }
+    .count b { display: block; font-family: 'Rubik'; font-size: 26px; font-weight: 700; }
+    .count small { font-size: 11px; color: var(--muted); }
+
+    .links { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+    .links a {
+      color: var(--text); text-decoration: none; font-weight: 600; font-size: 15px;
+      padding: 12px 18px; border-radius: 999px; border: 1px solid var(--border); background: var(--card);
+      transition: background .2s;
+    }
+    .links a:hover { background: rgba(255,255,255,.16); }
+
+    /* confetti canvas */
+    #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 5; }
+
+    @media (max-height: 640px) {
+      .emoji { font-size: 60px; margin-bottom: 8px; }
+      .card { padding: 14px 16px; }
+      .row { padding: 6px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" id="bg"></div>
+  <canvas id="confetti"></canvas>
+
+  <main class="app">
+
+    <!-- Slide 1 -->
+    <section class="slide active" data-slide>
+      <div class="emoji beat">💌</div>
+      <h1>היי, אהובה שלי</h1>
+      <p>יש לי משהו קטן להגיד לך…</p>
+      <p>תני לי רגע מזמנך, מבטיח שזה שווה את זה.</p>
+      <button class="btn" data-next>נו, ספר לי 👀</button>
+    </section>
+
+    <!-- Slide 2 -->
+    <section class="slide" data-slide>
+      <div class="emoji wiggle">🤔</div>
+      <h1>חשבתי על זה הרבה…</h1>
+      <p>עבר יותר מדי זמן מאז שיצאנו לערב <strong>רק שנינו</strong>.</p>
+      <p>בלי טלפונים, בלי לחץ. רק את, אני, ואוכל טוב.</p>
+      <button class="btn" data-next>ואז? 🍣</button>
+    </section>
+
+    <!-- Slide 3: details -->
+    <section class="slide" data-slide>
+      <div class="emoji">🍣</div>
+      <h1>אז הזמנתי לנו שולחן</h1>
+      <div class="card">
+        <div class="row">
+          <div class="ico">📍</div>
+          <div>
+            <div class="lbl">איפה</div>
+            <div class="val"><a href="https://domo-sushi.co.il/" target="_blank" rel="noopener">Domo Sushi</a></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="ico">📅</div>
+          <div>
+            <div class="lbl">מתי</div>
+            <div class="val">יום חמישי, 3.9.2026</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="ico">⏰</div>
+          <div>
+            <div class="lbl">בשעה</div>
+            <div class="val">20:30</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn" data-next>ויש עוד שאלה… 💭</button>
+    </section>
+
+    <!-- Slide 4: the question -->
+    <section class="slide" data-slide id="question">
+      <div class="emoji beat">🥺</div>
+      <h1>אז… תצאי איתי לדייט?</h1>
+      <p>יש רק תשובה אחת נכונה 😉</p>
+      <div class="answers" id="answers">
+        <button class="btn yes" id="yes">כן! 💖</button>
+        <button class="btn no" id="no">לא</button>
+      </div>
+      <div class="hint" id="hint"></div>
+    </section>
+
+    <!-- Slide 5: success -->
+    <section class="slide" data-slide id="success">
+      <div class="emoji beat">🥰</div>
+      <h1>ידעתי!!!</h1>
+      <p>נתראה ב-<strong>Domo Sushi</strong> ביום חמישי, <strong>3.9</strong> בשעה <strong>20:30</strong>.</p>
+      <p>אני כבר סופר את הדקות:</p>
+      <div class="count" id="count">
+        <div><b id="c-d">0</b><small>ימים</small></div>
+        <div><b id="c-h">0</b><small>שעות</small></div>
+        <div><b id="c-m">0</b><small>דקות</small></div>
+        <div><b id="c-s">0</b><small>שניות</small></div>
+      </div>
+      <div class="links">
+        <a id="gcal" href="#" target="_blank" rel="noopener">📅 הוסיפי ליומן</a>
+        <a href="https://domo-sushi.co.il/" target="_blank" rel="noopener">🍣 למסעדה</a>
+      </div>
+      <p style="margin-top:22px;font-size:15px">אוהב אותך ❤️</p>
+    </section>
+
+  </main>
+
+  <div class="dots" id="dots"></div>
+
+  <script>
+    // ===== Config =====
+    const DATE_ISO = '2026-09-03T20:30:00+03:00'; // 3.9.26, 20:30 Israel time
+    const PLACE = 'Domo Sushi';
+    const PLACE_URL = 'https://domo-sushi.co.il/';
+
+    // ===== Slides =====
+    const slides = [...document.querySelectorAll('[data-slide]')];
+    const dots = document.getElementById('dots');
+    slides.forEach(() => dots.appendChild(document.createElement('i')));
+    let current = 0;
+
+    function show(i) {
+      const from = slides[current];
+      from.classList.add('leaving');
+      setTimeout(() => {
+        from.classList.remove('active', 'leaving');
+        current = i;
+        slides[i].classList.add('active');
+        [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
+        if (slides[i].id === 'success') celebrate();
+      }, 280);
+    }
+    [...dots.children][0].classList.add('on');
+    document.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click', () => show(current + 1)));
+
+    // ===== Runaway "No" button =====
+    const no = document.getElementById('no');
+    const yes = document.getElementById('yes');
+    const hint = document.getElementById('hint');
+    const noTexts = ['לא', 'בטוחה?', 'תחשבי שוב 🤨', 'ממש לא?', 'אולי בכל זאת?', 'הכפתור הזה מקולקל', 'נו באמת 😅', 'רק כן עובד', 'תנסי שוב', 'לא ניתן ללחוץ'];
+    const hints = ['', 'אופס, הכפתור ברח 🏃‍♀️', 'הוא לא נותן ללחוץ עליו…', 'נראה שיש רק אפשרות אחת 😇', 'הכפתור הירוק הולך וגדל 👀', 'טוב, תלחצי כבר על כן 💚'];
+    let tries = 0;
+
+    function flee() {
+      tries++;
+      const pad = 16;
+      const w = no.offsetWidth, h = no.offsetHeight;
+      const maxX = window.innerWidth - w - pad;
+      const maxY = window.innerHeight - h - pad;
+      // keep it away from wherever it is now, so it visibly jumps
+      let x, y, attempts = 0;
+      const rect = no.getBoundingClientRect();
+      do {
+        x = pad + Math.random() * Math.max(1, maxX - pad);
+        y = pad + Math.random() * Math.max(1, maxY - pad);
+        attempts++;
+      } while (attempts < 12 && Math.hypot(x - rect.left, y - rect.top) < 160);
+      no.classList.add('fleeing');
+      no.style.left = x + 'px';
+      no.style.top = y + 'px';
+      no.style.transform = `rotate(${(Math.random() * 24 - 12).toFixed(1)}deg)`;
+      no.textContent = noTexts[Math.min(tries, noTexts.length - 1)];
+      hint.textContent = hints[Math.min(tries, hints.length - 1)];
+      // "yes" grows every time she tries "no"
+      const scale = Math.min(1 + tries * 0.12, 2.2);
+      yes.style.transform = `scale(${scale})`;
+      if (navigator.vibrate) navigator.vibrate(30);
+    }
+
+    // Desktop: run away as the cursor approaches. Touch: run away on touchstart (before click fires).
+    no.addEventListener('mouseenter', flee);
+    no.addEventListener('touchstart', (e) => { e.preventDefault(); flee(); }, { passive: false });
+    no.addEventListener('pointerdown', (e) => { e.preventDefault(); flee(); });
+    no.addEventListener('click', (e) => { e.preventDefault(); flee(); }); // safety net
+    document.addEventListener('mousemove', (e) => {
+      if (!slides[current].id || slides[current].id !== 'question') return;
+      const r = no.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      if (Math.hypot(e.clientX - cx, e.clientY - cy) < 90) flee();
+    });
+    window.addEventListener('resize', () => { if (no.classList.contains('fleeing')) flee(); });
+
+    yes.addEventListener('click', () => {
+      no.style.display = 'none';
+      show(slides.findIndex(s => s.id === 'success'));
+    });
+
+    // ===== Countdown + calendar =====
+    const target = new Date(DATE_ISO).getTime();
+    function tick() {
+      let diff = Math.max(0, target - Date.now());
+      const d = Math.floor(diff / 864e5); diff -= d * 864e5;
+      const h = Math.floor(diff / 36e5);  diff -= h * 36e5;
+      const m = Math.floor(diff / 6e4);   diff -= m * 6e4;
+      const s = Math.floor(diff / 1e3);
+      document.getElementById('c-d').textContent = d;
+      document.getElementById('c-h').textContent = h;
+      document.getElementById('c-m').textContent = m;
+      document.getElementById('c-s').textContent = s;
+    }
+    tick(); setInterval(tick, 1000);
+
+    (function buildCalendarLink() {
+      const fmt = (ms) => new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+      const params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: `דייט ב-${PLACE} 🍣❤️`,
+        dates: `${fmt(target)}/${fmt(target + 2 * 36e5)}`,
+        details: `הזמנה לדייט. ${PLACE_URL}`,
+        location: PLACE,
+      });
+      document.getElementById('gcal').href = 'https://calendar.google.com/calendar/render?' + params.toString();
+    })();
+
+    // ===== Floating background =====
+    (function bgEmoji() {
+      const bg = document.getElementById('bg');
+      const set = ['🍣', '🍱', '🥢', '💖', '🍶', '✨', '🌸', '💕'];
+      for (let i = 0; i < 18; i++) {
+        const s = document.createElement('span');
+        s.textContent = set[i % set.length];
+        s.style.left = Math.random() * 100 + 'vw';
+        s.style.fontSize = 18 + Math.random() * 24 + 'px';
+        s.style.animationDuration = 12 + Math.random() * 14 + 's';
+        s.style.animationDelay = -Math.random() * 20 + 's';
+        bg.appendChild(s);
+      }
+    })();
+
+    // ===== Confetti =====
+    function celebrate() {
+      const c = document.getElementById('confetti');
+      const ctx = c.getContext('2d');
+      c.width = innerWidth; c.height = innerHeight;
+      const colors = ['#ff6b8a', '#ffb86b', '#2ecc71', '#ffffff', '#ff4d6d', '#ffd2dc'];
+      const parts = Array.from({ length: 180 }, () => ({
+        x: Math.random() * c.width, y: -20 - Math.random() * c.height * 0.5,
+        w: 6 + Math.random() * 8, h: 8 + Math.random() * 10,
+        vx: (Math.random() - 0.5) * 2.5, vy: 2 + Math.random() * 4,
+        rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.25,
+        col: colors[Math.floor(Math.random() * colors.length)],
+        heart: Math.random() < 0.2,
+      }));
+      let frames = 0;
+      (function draw() {
+        ctx.clearRect(0, 0, c.width, c.height);
+        parts.forEach(p => {
+          p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+          if (p.y > c.height + 20) { p.y = -20; p.x = Math.random() * c.width; }
+          ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+          if (p.heart) { ctx.font = '18px serif'; ctx.fillText('❤️', -9, 6); }
+          else { ctx.fillStyle = p.col; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
+          ctx.restore();
+        });
+        if (++frames < 600) requestAnimationFrame(draw); else ctx.clearRect(0, 0, c.width, c.height);
+      })();
+    }
+  </script>
+</body>
+</html>
